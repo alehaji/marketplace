@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Enter Product — Studiogoods</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f7f5f2;
+      --surface: #ffffff;
+      --text: #1a1a1a;
+      --muted: #9a9490;
+      --border: #e8e4df;
+      --tag-bg: #f0ece7;
+      --focus: #1a1a1a;
+      --error: #c0392b;
+      --success: #2d7a4f;
+    }
+
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* ── Header ── */
+    header {
+      padding: 2rem 4rem;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      position: sticky; top: 0; z-index: 10;
+    }
+    .logo { font-family: 'DM Serif Display', serif; font-size: 1.5rem; letter-spacing: -0.02em; text-decoration: none; color: var(--text); }
+    .logo em { font-style: italic; color: var(--muted); }
+    nav { display: flex; gap: 2.5rem; font-size: 0.85rem; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
+    nav span { cursor: pointer; transition: color 0.2s; }
+    nav span:hover { color: var(--text); }
+    .back-btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.78rem; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase;
+      text-decoration: none; color: var(--muted);
+      border: 1px solid var(--border); padding: 0.5rem 1.2rem; border-radius: 2rem;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+      display: inline-flex; align-items: center; gap: 0.4rem;
+    }
+    .back-btn:hover { background: var(--text); color: #fff; border-color: var(--text); }
+    .back-btn svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* ── Page hero ── */
+    .page-hero { padding: 4rem 4rem 2rem; max-width: 900px; margin: 0 auto; }
+    .hero-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 1rem; }
+    .page-hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1.05; letter-spacing: -0.02em; }
+    .page-hero h1 em { font-style: italic; color: var(--muted); }
+
+    /* ── Form container ── */
+    .form-wrap { max-width: 900px; margin: 0 auto; padding: 0 4rem 6rem; }
+
+    .form-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      animation: fadeUp 0.5s ease both;
+    }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    .form-section {
+      padding: 2.5rem 3rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .form-section:last-of-type { border-bottom: none; }
+
+    .section-label {
+      font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted);
+      margin-bottom: 1.8rem; padding-bottom: 0.8rem; border-bottom: 1px solid var(--border);
+    }
+
+    .field-grid { display: grid; gap: 1.4rem; }
+    .field-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+    .field-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+    .field { display: flex; flex-direction: column; gap: 0.45rem; }
+    .field label {
+      font-size: 0.72rem; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text);
+    }
+    .field .hint { font-size: 0.72rem; color: var(--muted); margin-top: -0.2rem; }
+
+    .field input,
+    .field textarea,
+    .field select {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+      width: 100%;
+      appearance: none;
+    }
+    .field input::placeholder,
+    .field textarea::placeholder { color: var(--muted); }
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      border-color: var(--focus);
+      box-shadow: 0 0 0 3px rgba(26,26,26,0.06);
+    }
+    .field textarea { resize: vertical; min-height: 90px; line-height: 1.55; }
+
+    /* Select arrow */
+    .select-wrap { position: relative; }
+    .select-wrap select { padding-right: 2.5rem; cursor: pointer; }
+    .select-wrap::after {
+      content: '';
+      position: absolute; right: 1rem; top: 50%; transform: translateY(-50%);
+      width: 0; height: 0;
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 5px solid var(--muted);
+      pointer-events: none;
+    }
+
+    /* Image preview */
+    .image-preview-wrap { margin-top: 0.6rem; }
+    .image-preview {
+      width: 100%; max-height: 180px; object-fit: cover;
+      border-radius: 8px; border: 1px solid var(--border);
+      display: none; background: var(--tag-bg);
+    }
+    .image-preview.visible { display: block; }
+    .preview-error { font-size: 0.75rem; color: var(--error); display: none; margin-top: 0.3rem; }
+    .preview-error.visible { display: block; }
+
+    /* ── Form footer / submit ── */
+    .form-footer {
+      padding: 2rem 3rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+      background: var(--tag-bg);
+      border-top: 1px solid var(--border);
+    }
+    .form-footer-note { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+
+    .submit-btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase;
+      background: var(--text); color: #fff;
+      border: none; border-radius: 2rem;
+      padding: 0.75rem 2rem;
+      cursor: pointer;
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      transition: opacity 0.2s, transform 0.15s;
+      white-space: nowrap;
+    }
+    .submit-btn:hover:not(:disabled) { opacity: 0.75; transform: scale(0.98); }
+    .submit-btn:active:not(:disabled) { transform: scale(0.94); }
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .spinner {
+      width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .submit-btn.loading .spinner { display: block; }
+    .submit-btn.loading .btn-label { opacity: 0.7; }
+
+    /* ── Success overlay ── */
+    .success-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(247,245,242,0.92);
+      backdrop-filter: blur(6px);
+      align-items: center; justify-content: center;
+      animation: fadeIn 0.3s ease;
+    }
+    .success-overlay.visible { display: flex; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .success-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 3rem 3.5rem;
+      text-align: center;
+      max-width: 420px;
+      width: 90%;
+      animation: popIn 0.4s cubic-bezier(.22,.68,0,1.2) both;
+    }
+    @keyframes popIn { from { opacity: 0; transform: scale(0.9) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+    .success-icon {
+      width: 52px; height: 52px;
+      background: var(--text); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.5rem;
+    }
+    .success-icon svg { width: 22px; height: 22px; stroke: #fff; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+    .success-card h2 { font-family: 'DM Serif Display', serif; font-size: 1.6rem; letter-spacing: -0.02em; margin-bottom: 0.6rem; }
+    .success-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; margin-bottom: 1.8rem; }
+
+    .redirect-bar-wrap { height: 3px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .redirect-bar { height: 100%; background: var(--text); width: 0%; border-radius: 99px; transition: width 3s linear; }
+    .redirect-label { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.05em; margin-top: 0.6rem; }
+
+    footer { text-align: center; padding: 2rem; border-top: 1px solid var(--border); font-size: 0.78rem; color: var(--muted); letter-spacing: 0.04em; }
+
+    @media (max-width: 768px) {
+      header { padding: 1.5rem; } nav { display: none; }
+      .page-hero, .form-wrap { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .page-hero { padding-top: 2.5rem; }
+      .form-section { padding: 1.8rem 1.5rem; }
+      .field-grid.cols-2, .field-grid.cols-3 { grid-template-columns: 1fr; }
+      .form-footer { flex-direction: column; align-items: stretch; text-align: center; padding: 1.5rem; }
+      .submit-btn { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<header>
+  <a href="index.html" class="logo">Studio<em>goods</em></a>
+  <nav><span>Shop</span><span>About</span><span>Journal</span></nav>
+  <a href="index.html" class="back-btn">
+    <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    Back to Shop
+  </a>
+</header>
+
+<!-- ── Page Hero ── -->
+<div class="page-hero">
+  <p class="hero-label">Product Management</p>
+  <h1>Add a new <em>product.</em></h1>
+</div>
+
+<!-- ── Form ── -->
+<div class="form-wrap">
+  <div class="form-card">
+
+    <!-- Section 1: Core info -->
+    <div class="form-section">
+      <p class="section-label">Core Information</p>
+      <div class="field-grid cols-2">
+        <div class="field">
+          <label for="field-name">Product Name <span style="color:var(--error)">*</span></label>
+          <input type="text" id="field-name" name="name" placeholder="e.g. Linen Tote Bag" required />
+        </div>
+        <div class="field">
+          <label for="field-category">Category <span style="color:var(--error)">*</span></label>
+          <input type="text" id="field-category" name="category" placeholder="e.g. Bags, Ceramics, Stationery" required />
+          <span class="hint">Determines the filter tab on the shop page</span>
+        </div>
+      </div>
+      <div class="field-grid" style="margin-top:1.4rem;">
+        <div class="field">
+          <label for="field-desc">Description <span style="color:var(--error)">*</span></label>
+          <textarea id="field-desc" name="desc" placeholder="A short, evocative description of the product…" required></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2: Pricing & badge -->
+    <div class="form-section">
+      <p class="section-label">Pricing &amp; Label</p>
+      <div class="field-grid cols-2">
+        <div class="field">
+          <label for="field-price">Price <span style="color:var(--error)">*</span></label>
+          <input type="text" id="field-price" name="price" placeholder="e.g. $48 or €36.00" required />
+          <span class="hint">Include currency symbol — displayed as-is</span>
+        </div>
+        <div class="field">
+          <label for="field-badge">Badge <span style="color:var(--muted);font-weight:400">(optional)</span></label>
+          <input type="text" id="field-badge" name="badge" placeholder="e.g. New, Sale, Sold Out" />
+          <span class="hint">Appears as a pill overlay on the product image</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: Image -->
+    <div class="form-section">
+      <p class="section-label">Product Image</p>
+      <div class="field">
+        <label for="field-image">Image URL <span style="color:var(--error)">*</span></label>
+        <input type="url" id="field-image" name="image" placeholder="https://example.com/image.jpg" required />
+        <span class="hint">Direct link to an image (JPG, PNG, WebP). Displayed at 4:3 ratio.</span>
+      </div>
+      <div class="image-preview-wrap">
+        <img class="image-preview" id="image-preview" src="" alt="Preview" />
+        <p class="preview-error" id="preview-error">⚠ Could not load image — please check the URL.</p>
+      </div>
+    </div>
+
+    <!-- Form footer -->
+    <div class="form-footer">
+      <p class="form-footer-note">All fields marked <span style="color:var(--error)">*</span> are required.<br/>Data is submitted directly to your Google Sheet.</p>
+      <button class="submit-btn" id="submit-btn" type="button" onclick="handleSubmit()">
+        <span class="spinner" id="spinner"></span>
+        <span class="btn-label" id="btn-label">Submit Product</span>
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<footer>© 2026 Studiogoods · All rights reserved</footer>
+
+<!-- ── Success overlay ── -->
+<div class="success-overlay" id="success-overlay">
+  <div class="success-card">
+    <div class="success-icon">
+      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h2>Product added.</h2>
+    <p>Your product has been submitted successfully and will appear in the shop once the sheet refreshes.</p>
+    <div class="redirect-bar-wrap">
+      <div class="redirect-bar" id="redirect-bar"></div>
+    </div>
+    <p class="redirect-label">Returning to shop…</p>
+  </div>
+</div>
+
+<script>
+  // ── Replace with your Google Apps Script Web App URL ─────────────────────
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw_z9d9s3J7DeMRZXBTUBNty2WqWO8LSQxXrbWnJ-ho_Ex2u-ZhHp9myTiBYH809NHN/exec";
+
+  // ── Image preview on URL change ──────────────────────────────────────────
+  const imageInput = document.getElementById('field-image');
+  const previewImg = document.getElementById('image-preview');
+  const previewErr = document.getElementById('preview-error');
+
+  let previewTimer;
+  imageInput.addEventListener('input', () => {
+    clearTimeout(previewTimer);
+    previewImg.classList.remove('visible');
+    previewErr.classList.remove('visible');
+    const url = imageInput.value.trim();
+    if (!url) return;
+    previewTimer = setTimeout(() => {
+      previewImg.src = url;
+      previewImg.onload = () => {
+        previewImg.classList.add('visible');
+        previewErr.classList.remove('visible');
+      };
+      previewImg.onerror = () => {
+        previewImg.classList.remove('visible');
+        previewErr.classList.add('visible');
+      };
+    }, 500);
+  });
+
+  // ── Collect form values ──────────────────────────────────────────────────
+  function getFieldValue(id) {
+    return document.getElementById(id).value.trim();
+  }
+
+  function validateForm() {
+    const required = [
+      { id: 'field-name',     label: 'Product Name' },
+      { id: 'field-category', label: 'Category' },
+      { id: 'field-desc',     label: 'Description' },
+      { id: 'field-price',    label: 'Price' },
+      { id: 'field-image',    label: 'Image URL' },
+    ];
+    for (const { id, label } of required) {
+      const el = document.getElementById(id);
+      if (!el.value.trim()) {
+        el.focus();
+        el.style.borderColor = 'var(--error)';
+        el.style.boxShadow = '0 0 0 3px rgba(192,57,43,0.1)';
+        el.addEventListener('input', () => {
+          el.style.borderColor = '';
+          el.style.boxShadow = '';
+        }, { once: true });
+        return false;
+      }
+    }
+    return true;
+  }
+
+  // ── Submit handler ───────────────────────────────────────────────────────
+  async function handleSubmit() {
+    if (!validateForm()) return;
+
+    const btn    = document.getElementById('submit-btn');
+    const label  = document.getElementById('btn-label');
+    const spinner = document.getElementById('spinner');
+
+    // Loading state
+    btn.disabled = true;
+    btn.classList.add('loading');
+    spinner.style.display = 'block';
+    label.textContent = 'Submitting…';
+
+    // Build URL params matching the CSV column names used in the shop
+    const params = new URLSearchParams({
+      name:     getFieldValue('field-name'),
+      category: getFieldValue('field-category'),
+      desc:     getFieldValue('field-desc'),
+      price:    getFieldValue('field-price'),
+      image:    getFieldValue('field-image'),
+      badge:    getFieldValue('field-badge'),
+    });
+
+    try {
+      const res = await fetch(`${WEB_APP_URL}?${params.toString()}`, { method: 'GET' });
+      if (!res.ok) throw new Error(`Server responded with ${res.status}`);
+
+      showSuccess();
+    } catch (err) {
+      // Restore button on error
+      btn.disabled = false;
+      btn.classList.remove('loading');
+      spinner.style.display = 'none';
+      label.textContent = 'Submit Product';
+
+      // Inline error message
+      const existingErr = document.querySelector('.submit-error');
+      if (existingErr) existingErr.remove();
+      const errEl = document.createElement('p');
+      errEl.className = 'submit-error';
+      errEl.style.cssText = 'font-size:0.78rem;color:var(--error);margin-top:0.5rem;text-align:right;';
+      errEl.textContent = `Submission failed: ${err.message}`;
+      document.querySelector('.form-footer').appendChild(errEl);
+    }
+  }
+
+  // ── Success overlay + redirect ────────────────────────────────────────────
+  function showSuccess() {
+    const overlay = document.getElementById('success-overlay');
+    const bar     = document.getElementById('redirect-bar');
+
+    overlay.classList.add('visible');
+
+    // Animate progress bar over 3 s then redirect
+    requestAnimationFrame(() => {
+      bar.style.width = '100%';
+    });
+
+    setTimeout(() => {
+      window.location.href = 'index.html';
+    }, 3200);
+  }
+</script>
+</body>
+</html>
